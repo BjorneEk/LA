@@ -1,8 +1,3 @@
-
-#ifndef _LA_MATRIX_H_
-#define _LA_MATRIX_H_
-
-#include <stdbool.h>
 /*==========================================================*
  *
  * @author Gustaf Franzén :: https://github.com/BjorneEk;
@@ -14,20 +9,26 @@
  * and other functions return a new matrix with the result.
  *
  *==========================================================*/
+ 
+#ifndef _LA_MATRIX_H_
+#define _LA_MATRIX_H_
+
+#include <UL/types.h>
+
 
 #define LA_MIN_COEF 0.000000000000001
 #define MIN_MAT_THRESHOLD 40
 
-typedef struct _la_matrix {
-  /**
-   * the height and width of the matrix;
-   **/
-  unsigned int rows, cols;
+typedef struct LA_matrix_s {
+        /**
+         * the height and width of the matrix;
+         **/
+        u32_t rows, cols;
 
-  /**
-  * the matrix data stored in linear continous memory for faster acces
-  **/
-  double * data;
+        /**
+        * the matrix data stored in linear continous memory for faster acces
+        **/
+        f64_t * data;
 } LA_matrix;
 
 
@@ -35,8 +36,13 @@ typedef struct _la_matrix {
  *  allocates a new matrix of dimension width x height and
  *  setts all elements to zero.
  *==========================================================*/
-LA_matrix * LA_new_mat(unsigned int width,
-                       unsigned int height);
+LA_matrix * LA_empty(u32_t cols, u32_t rows);
+
+/*==========================================================*
+ *  allocates a new matrix of dimension width x height and
+ *  setts the elements to the suplied values
+ *==========================================================*/
+LA_matrix * LA_new(u32_t cols, u32_t rows, ...);
 
 /*==========================================================*
  *  creates a new copy of the input matrix
@@ -68,7 +74,7 @@ LA_matrix * LA_readmat(const char * filename);
 /*==========================================================*
  *  reads a array of matricies from a file
  *==========================================================*/
-LA_matrix * LA_read_matricies(const char * filename, int * len);
+LA_matrix * LA_read_matricies(const char * filename, i32_t * len);
 
 /*==========================================================*
  *  writes a matrix to a file
@@ -79,18 +85,18 @@ void        LA_writemat(const LA_matrix * m,
 /*==========================================================*
  *  sets the diagonal in m to d
  *==========================================================*/
-void LA_set_diagonal(LA_matrix *m, double d);
+void LA_set_diagonal(LA_matrix *m, f64_t d);
 
 /*==========================================================*
  *  creates a nxn identity matrix
  *==========================================================*/
-LA_matrix * LA_identity_mat(unsigned int n);
+LA_matrix * LA_eye(u32_t n);
 
 /*==========================================================*
  *  creates a nxm random matrix
  *==========================================================*/
-LA_matrix * LA_random(unsigned int width, unsigned int height,
-                      double min, double max);
+LA_matrix * LA_random(u32_t width, u32_t height,
+                      f64_t min,   f64_t max);
 
 /*==========================================================*
  *  creates a transpose the matrix m
@@ -100,11 +106,11 @@ LA_matrix * LA_transpose(const LA_matrix * m);
 /*==========================================================*
  *  multiplies each element in m with s
  *==========================================================*/
-void        LA_scale_r(LA_matrix * m, double s);
+void        LA_scale_r(LA_matrix * m, f64_t s);
 /*==========================================================*
  *  creates a new matrix with the values of m scaled by s
  *==========================================================*/
-LA_matrix * LA_scale(const LA_matrix * m, double s);
+LA_matrix * LA_scale(const LA_matrix * m, f64_t s);
 
 /*==========================================================*
  *  add the matrix b to the matrix a
@@ -149,57 +155,57 @@ bool        LA_equal_dim(const LA_matrix * a, const LA_matrix * b);
 /*==========================================================*
  *  swap row _p with row _q in the matrix m
  *==========================================================*/
-void        LA_rswap(LA_matrix * m, int _p, int _q);
+void        LA_rswap(LA_matrix * m, i32_t _p, i32_t _q);
 
 /*==========================================================*
  *  swap column _p with column _q in the matrix m
  *==========================================================*/
-void        LA_cswap(LA_matrix * m, int _p, int _q);
+void        LA_cswap(LA_matrix * m, i32_t _p, i32_t _q);
 
 /*==========================================================*
  *  returns the row r of a matrix m
  *==========================================================*/
-LA_matrix * LA_rowat(const LA_matrix * m, unsigned int r);
+LA_matrix * LA_rowat(const LA_matrix * m, u32_t r);
 
 /*==========================================================*
  *  returns the col c of a matrix m
  *==========================================================*/
-LA_matrix * LA_colat(const LA_matrix * m, unsigned int c);
+LA_matrix * LA_colat(const LA_matrix * m, u32_t c);
 
 /*==========================================================*
  *  wultiply al elements in row r with s
  *==========================================================*/
-void        LA_mult_row_r(LA_matrix * m, unsigned int r, double s);
+void        LA_mult_row_r(LA_matrix * m, u32_t r, f64_t s);
 
 /*==========================================================*
  *  create a new copy of a where row r has been
  *  multiplied by s
  *==========================================================*/
-LA_matrix * LA_mult_row(const LA_matrix * m, unsigned int r, double s);
+LA_matrix * LA_mult_row(const LA_matrix * m, u32_t r, f64_t s);
 
 /*==========================================================*
  *  wultiply al elements in col c with s
  *==========================================================*/
-void        LA_mult_col_r(LA_matrix * m, unsigned int c, double s);
+void        LA_mult_col_r(LA_matrix * m, u32_t c, f64_t s);
 
 /*==========================================================*
  *  create a new copy of a where col c has been
  *  multiplied by s
  *==========================================================*/
-LA_matrix * LA_mult_col(const LA_matrix * m, unsigned int c, double s);
+LA_matrix * LA_mult_col(const LA_matrix * m, u32_t c, f64_t s);
 
 /*==========================================================*
  * add row r multiplied with the scalar s to the row d
  *==========================================================*/
-void        LA_row_add_row_r(LA_matrix * m, unsigned int d, unsigned int r, double s);
+void        LA_row_add_row_r(LA_matrix * m, u32_t d, u32_t r, f64_t s);
 
 /*==========================================================*
  * create a new copy of m where the row r multiplied with
  * the scalar s have been addet to the row d
  *==========================================================*/
-LA_matrix * LA_row_add_row(LA_matrix * m, unsigned int d, unsigned int r, double s);
+LA_matrix * LA_row_add_row(LA_matrix * m, u32_t d, u32_t r, f64_t s);
 
-unsigned int LA_lup_decompose(LA_matrix *m, LA_matrix **P, LA_matrix **L, LA_matrix **U);
+u32_t LA_lup_decompose(LA_matrix *m, LA_matrix **P, LA_matrix **L, LA_matrix **U);
 
 /*==========================================================*
  * linear system solve forward
@@ -250,25 +256,25 @@ LA_matrix * LA_inverse(LA_matrix *m);
 /*==========================================================*
  * calculates the determinant of the matrix m
  *==========================================================*/
-double LA_det(LA_matrix * m);
+f64_t LA_det(LA_matrix * m);
 
 /*==========================================================*
  * calculates dot product of two vectors
  *==========================================================*/
-double LA_dot(const LA_matrix * a, const LA_matrix * b);
+f64_t LA_dot(const LA_matrix * a, const LA_matrix * b);
 /*==========================================================*
  * calculates dot product of two columns in two matricies
  *==========================================================*/
-double LA_dot_col(const LA_matrix * a, unsigned int ac, const LA_matrix * b, unsigned int bc);
+f64_t LA_dot_col(const LA_matrix * a, u32_t ac, const LA_matrix * b, u32_t bc);
 
 /*==========================================================*
  * calculates absolute value (length) of a vector
  *==========================================================*/
-double LA_abs(const LA_matrix * a);
+f64_t LA_abs(const LA_matrix * a);
 /*==========================================================*
  * calculates absolute value (length) of a column
  *==========================================================*/
-double LA_abs_col(const LA_matrix * a, unsigned int c);
+f64_t LA_abs_col(const LA_matrix * a, u32_t c);
 /*==========================================================*
  * calculates absolute value (length) of each column
  * in a matrix and returns a 1 x 3 matrix with the result
