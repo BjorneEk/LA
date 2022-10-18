@@ -79,7 +79,7 @@ int main(int argc, char const *argv[])
         }
         free(mats);
 
-        LA_test_mult_advanced(70);
+        LA_test_mult_advanced(300);
         return 0;
 
 }

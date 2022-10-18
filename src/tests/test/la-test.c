@@ -66,13 +66,14 @@ void LA_test_mult(LA_matrix * mats) {
 
 void LA_test_mult_advanced(i32_t max) {
         LA_matrix *m1, *m2, *res;
-        FILE *fp_1, *fp_2;
-        i64_t * times, * times_naive;
+        FILE *fp_1, *fp_2, *fp_3;
+        i64_t * times, * times_naive, *times_blas;
         clock_t begin, end;
         i32_t i, dim;
 
         times = malloc(max * sizeof(long));
         times_naive = malloc(max * sizeof(long));
+        times_blas = malloc(max * sizeof(long));
         assertf(times != NULL && times_naive != NULL, "Out of memory (%s)", __func__);
 
         for (i = 1; i <= max; i++) {
@@ -89,6 +90,13 @@ void LA_test_mult_advanced(i32_t max) {
                 LA_free(res);
 
                 begin = clock();
+                res = LA_multBLAS(m1, m2);
+                end = clock();
+
+                times_blas[i-1] = (long)(1000000.0*(f64_t)(end - begin) / CLOCKS_PER_SEC);
+                LA_free(res);
+
+                begin = clock();
                 res = LA_mult_naive(m1, m2);
                 end = clock();
 
@@ -101,20 +109,25 @@ void LA_test_mult_advanced(i32_t max) {
 
         fp_1 = fopen("matmult_times_fast.csv", "w");
         fp_2 = fopen("matmult_times_naive.csv", "w");
+        fp_3 = fopen("matmult_times_blas.csv", "w");
         for(i = 0; i < max; i++){
                 if(i!= max-1){
                         fprintf(fp_1, "%ld,", times[i]);
                         fprintf(fp_2, "%ld,", times_naive[i]);
+                        fprintf(fp_3, "%ld,", times_blas[i]);
                 }
                 else{
                         fprintf(fp_1, "%ld\n", times[i]);
                         fprintf(fp_2, "%ld\n", times_naive[i]);
+                        fprintf(fp_3, "%ld\n", times_blas[i]);
                 }
         }
         fclose(fp_1);
         fclose(fp_2);
+        fclose(fp_3);
         free(times);
         free(times_naive);
+        free(times_blas);
 }
 
 void LA_test_gaus_jordan_LUP(LA_matrix * mats) {

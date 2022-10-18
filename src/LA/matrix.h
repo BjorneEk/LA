@@ -9,9 +9,10 @@
  * and other functions return a new matrix with the result.
  *
  *==========================================================*/
- 
+
 #ifndef _LA_MATRIX_H_
 #define _LA_MATRIX_H_
+
 
 #include <UL/types.h>
 
@@ -140,6 +141,12 @@ LA_matrix * LA_mult_naive(const LA_matrix * a, const LA_matrix * b);
  *  creates a new matrix that is equal to a * b
  *==========================================================*/
 LA_matrix * LA_mult(const LA_matrix * a, const LA_matrix * b);
+
+/*==========================================================*
+ *  creates a new matrix that is equal to a * b using
+ *  the BLAS function cblas_dgemm
+ *==========================================================*/
+LA_matrix * LA_multBLAS(const LA_matrix * a, const LA_matrix * b);
 
 /*==========================================================*
  *  returns true is a is identical to b

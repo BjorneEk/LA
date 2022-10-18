@@ -14,6 +14,7 @@
 #include <UL/IO.h>
 #include <UL/assert.h>
 #include <UL/math.h>
+#include </opt/homebrew/opt/openblas/include/cblas.h>
 
 #define LA_ERR_ATLEAST_1X1 "New matrix must be at least a 1 by 1, input(%u, %u)"
 #define LA_ERR_MEM         "Out of memory: (%s)."
@@ -447,6 +448,22 @@ LA_matrix * LA_mult(const LA_matrix * a, const LA_matrix * b)
         return res;
 }
 
+static void matmult_blas(i32_t ar, i32_t ac, f64_t *A, i32_t br, i32_t bc, f64_t *B, f64_t *C)
+{
+        cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,ar,bc,ac,1.0,A,ar,B,ac,1,C,ar);
+}
+
+LA_matrix * LA_multBLAS(const LA_matrix * a, const LA_matrix * b)
+{
+        LA_matrix * res;
+
+        assertf(a->cols == b->rows,
+                "Matrices have incorrect dimensions. a->cols != b->rows (%s)", __func__);
+        res = LA_empty(b->cols, a->rows);
+
+        matmult_blas(a->rows, a->cols, a->data, b->rows, b->cols, b->data, res->data);
+        return res;
+}
 LA_matrix * LA_mult_naive(const LA_matrix * a, const LA_matrix * b)
 {
         i32_t i, j, k;
